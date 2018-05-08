@@ -6,6 +6,6 @@
 # Generated on crash by the VM
 erl_crash.dump
 
-/config/*.secrete.exs
+/config/*.secret.exs
 /doc
 /log
