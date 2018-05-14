@@ -58,6 +58,10 @@ defmodule Logger.Backends.Youtrack do
     :ok
   end
 
+  defp generate_summary(message, level) do
+    Atom.to_string(level) <> ". " <> message
+  end
+
   defp generate_description(metadata) do
     module = metadata[:module]
     function = metadata[:function]
