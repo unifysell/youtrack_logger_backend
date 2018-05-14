@@ -26,6 +26,7 @@ defmodule YoutrackLoggerBackend.MixProject do
 
   defp package do
     [
+      organization: "unifysell",
       files: ["lib", "mix.exs", "README*", "LICENSE"],
       maintainers: ["unifysell", "cstaud"],
       licenses: ["MIT"],
