@@ -10,7 +10,7 @@ config :logger, :youtrack,
   project: "xxx",
   level: :error #optional
 
-# Add to prod.secrets.exs
+# Add to prod.secret.exs
 
 config :logger, :youtrack,
   token: "xxx"

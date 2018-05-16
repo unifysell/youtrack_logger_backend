@@ -4,7 +4,7 @@ defmodule YoutrackLoggerBackend.MixProject do
   def project do
     [
       app: :youtrack_logger_backend,
-      version: "0.0.1",
+      version: "0.0.1-beta.1",
       elixir: "~> 1.6",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
