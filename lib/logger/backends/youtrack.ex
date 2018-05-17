@@ -8,7 +8,9 @@ defmodule Logger.Backends.Youtrack do
   defstruct host: nil,
             project: nil,
             token: nil,
-            level: nil
+            level: nil,
+            format: nil,
+            metadata: nil
 
   def init({__MODULE__, opts}) do
     config = Application.get_env(:logger, :youtrack)
@@ -29,12 +31,12 @@ defmodule Logger.Backends.Youtrack do
   end
 
   def handle_event(
-        {level, _group_leader, {Logger, message, _timestamp, metadata}},
+        {level, _group_leader, {Logger, message, timestamp, metadata}},
         %{level: min_level} = state
       ) do
     if Logger.compare_levels(level, min_level) != :lt do
       description = generate_description(metadata)
-      summary = generate_summary(message, level)
+      summary = generate_summary(level, message, timestamp, metadata, state)
       log_event(state, summary, description)
     end
 
@@ -53,13 +55,24 @@ defmodule Logger.Backends.Youtrack do
     {:ok, state}
   end
 
-  def terminate(reason, _state) do
-    IO.inspect(reason, label: "REASON")
+  def terminate(_reason, _state) do
     :ok
   end
 
-  defp generate_summary(message, level) do
-    Atom.to_string(level) <> ". " <> message
+  defp generate_summary(level, message, timestamp, metadata, %{format: format, metadata: keys} = state) do
+    Logger.Formatter.format(format, level, message, timestamp, take_metadata(metadata, keys))
+    |> to_string()
+  end
+
+  defp take_metadata(metadata, keys) do
+    metadatas = Enum.reduce(keys, [], fn key, acc ->
+      case Keyword.fetch(metadata, key) do
+        {:ok, val} -> [{key, val} | acc]
+        :error     -> acc
+      end
+    end)
+
+    Enum.reverse(metadatas)
   end
 
   defp generate_description(metadata) do
@@ -78,12 +91,17 @@ defmodule Logger.Backends.Youtrack do
     project = Keyword.get(config, :project)
     token = Keyword.get(config, :token)
     level = Keyword.get(config, :level, :debug)
+    format_string = Keyword.get(config, :format)
+    format = Logger.Formatter.compile(format_string)
+    metadata = Keyword.get(config, :metadata)
 
     %{
       state
       | host: host,
         project: project,
         token: token,
+        format: format,
+        metadata: metadata,
         level: level
     }
   end
