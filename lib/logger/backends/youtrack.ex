@@ -9,8 +9,12 @@ defmodule Logger.Backends.Youtrack do
             project: nil,
             token: nil,
             level: nil,
-            format: nil,
+            format_summary: nil,
+            format_description: nil,
             metadata: nil
+
+  @default_format_summary "$level: $message\n"
+  @default_format_description "$date $time\n$metadata\n"
 
   def init({__MODULE__, opts}) do
     config = Application.get_env(:logger, :youtrack)
@@ -35,7 +39,7 @@ defmodule Logger.Backends.Youtrack do
         %{level: min_level} = state
       ) do
     if Logger.compare_levels(level, min_level) != :lt do
-      description = generate_description(metadata)
+      description = generate_description(level, message, timestamp, metadata, state)
       summary = generate_summary(level, message, timestamp, metadata, state)
       log_event(state, summary, description)
     end
@@ -59,31 +63,27 @@ defmodule Logger.Backends.Youtrack do
     :ok
   end
 
-  defp generate_summary(level, message, timestamp, metadata, %{format: format, metadata: keys} = state) do
+  defp generate_summary(level, message, timestamp, metadata, %{format_summary: format, metadata: keys} = state) do
     Logger.Formatter.format(format, level, message, timestamp, take_metadata(metadata, keys))
     |> to_string()
   end
 
-  defp take_metadata(metadata, keys) do
-    metadatas = Enum.reduce(keys, [], fn key, acc ->
-      case Keyword.fetch(metadata, key) do
-        {:ok, val} -> [{key, val} | acc]
-        :error     -> acc
-      end
-    end)
-
-    Enum.reverse(metadatas)
+  defp generate_description(level, message, timestamp, metadata, %{format_description: format, metadata: keys} = state) do
+    Logger.Formatter.format(format, level, message, timestamp, take_metadata(metadata, keys))
+    |> to_string()
   end
 
-  defp generate_description(metadata) do
-    module = metadata[:module]
-    function = metadata[:function]
-    file = metadata[:file]
-    line = metadata[:line]
+  defp take_metadata(metadata, :all), do: metadata
 
-    "module: " <>
-      to_string(module) <>
-      "\n function: " <> function <> "\n file: " <> file <> "\n line: " <> to_string(line)
+  defp take_metadata(metadata, keys) do
+    reduced_metadata = Enum.reduce(keys, [], fn key, acc ->
+      case Keyword.fetch(metadata, key) do
+        {:ok, val} -> [{key, val} | acc]
+        :error -> acc
+      end
+    end)
+    |> Enum.reverse()
+    for {key, value} <- reduced_metadata, do: {key, to_string(value)<>"\n"}
   end
 
   defp init(config, state) do
@@ -91,8 +91,10 @@ defmodule Logger.Backends.Youtrack do
     project = Keyword.get(config, :project)
     token = Keyword.get(config, :token)
     level = Keyword.get(config, :level, :debug)
-    format_string = Keyword.get(config, :format)
-    format = Logger.Formatter.compile(format_string)
+    format_summary_string = Keyword.get(config, :format_summary, @default_format_summary)
+    format_summary = Logger.Formatter.compile(format_summary_string)
+    format_description_string = Keyword.get(config, :format_description, @default_format_description)
+    format_description = Logger.Formatter.compile(format_description_string)
     metadata = Keyword.get(config, :metadata)
 
     %{
@@ -100,7 +102,8 @@ defmodule Logger.Backends.Youtrack do
       | host: host,
         project: project,
         token: token,
-        format: format,
+        format_summary: format_summary,
+        format_description: format_description,
         metadata: metadata,
         level: level
     }
@@ -113,7 +116,6 @@ defmodule Logger.Backends.Youtrack do
        ) do
     client = Youtrack.client(host, token)
     {:ok, response} = Youtrack.create_issue(client, project, summary, description)
-    IO.inspect(response)
     {:ok, state}
   end
 end
