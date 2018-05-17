@@ -83,7 +83,7 @@ defmodule Logger.Backends.Youtrack do
       end
     end)
     |> Enum.reverse()
-    for {key, value} <- reduced_metadata, do: {key, to_string(value)<>"\n"}
+    for {key, value} <- reduced_metadata, do: {"'''"<>to_string(key)<>"'''", to_string(value)<>"\n"}
   end
 
   defp init(config, state) do
