@@ -4,7 +4,7 @@ defmodule YoutrackLoggerBackend.MixProject do
   def project do
     [
       app: :youtrack_logger_backend,
-      version: "0.1.0-beta.1",
+      version: "0.1.0-beta.2",
       elixir: "~> 1.6",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
@@ -17,7 +17,7 @@ defmodule YoutrackLoggerBackend.MixProject do
   end
 
   def application do
-    [applications: [:logger, :hackney]]
+    [applications: [:hackney]]
   end
 
   defp description do
