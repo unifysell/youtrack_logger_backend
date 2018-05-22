@@ -73,6 +73,7 @@ defmodule Logger.Backends.Youtrack do
     |> to_string()
   end
 
+  defp take_metadata(metadata, keys) when is_nil(keys), do: metadata
   defp take_metadata(metadata, :all), do: metadata
 
   defp take_metadata(metadata, keys) do
