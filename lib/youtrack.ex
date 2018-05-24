@@ -4,7 +4,6 @@ defmodule Youtrack do
   """
 
   use Tesla
-  plug(Tesla.Middleware.Logger)
 
   def client(host, token) when is_binary(host) and is_binary(token) do
     Tesla.build_client([
