@@ -115,8 +115,11 @@ defmodule Logger.Backends.Youtrack do
          summary,
          description
        ) do
-    client = Youtrack.client(host, token)
+    client = Youtrack.client(host, token)     
+    IO.inspect(client, label: ">>>CLIENT:")     
     {:ok, response} = Youtrack.create_issue(client, project, summary, description)
+    IO.inspect(response, label: ">>>RESPONSE:")     
+         
     {:ok, state}
   end
 end
