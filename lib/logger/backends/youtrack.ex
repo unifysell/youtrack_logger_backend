@@ -5,6 +5,8 @@ defmodule Logger.Backends.Youtrack do
 
   @behaviour :gen_event
 
+  require Logger
+
   defstruct host: nil,
             project: nil,
             token: nil,
@@ -38,7 +40,8 @@ defmodule Logger.Backends.Youtrack do
         {level, _group_leader, {Logger, message, timestamp, metadata}},
         %{level: min_level} = state
       ) do
-    if Logger.compare_levels(level, min_level) != :lt do
+    ignore_youtrack_backend = Keyword.get(metadata, :ignore_youtrack_backend, false)
+    if Logger.compare_levels(level, min_level) != :lt && !ignore_youtrack_backend do
       description = generate_description(level, message, timestamp, metadata, state)
       summary = generate_summary(level, message, timestamp, metadata, state)
       log_event(state, summary, description)
@@ -115,11 +118,11 @@ defmodule Logger.Backends.Youtrack do
          summary,
          description
        ) do
-    client = Youtrack.client(host, token)     
-    IO.inspect(client, label: ">>>CLIENT:")     
+    client = Youtrack.client(host, token)
     {:ok, response} = Youtrack.create_issue(client, project, summary, description)
-    IO.inspect(response, label: ">>>RESPONSE:")     
-         
+    if response.status > 299 or response.status < 200 do
+      Logger.error("Request to #{response.url} failed with status #{response.status}.", ignore_youtrack_backend: true)
+    end
     {:ok, state}
   end
 end
