@@ -11,6 +11,9 @@ defmodule YoutrackLoggerBackend.MixProject do
       description: description(),
       package: package(),
       deps: deps(),
+      source_url: "https://github.com/unifysell/youtrack_logger_backend",
+      homepage_url: "https://github.com/unifysell/youtrack_logger_backend",
+      docs: [extras: ["README.md"], main: "readme", source_ref: "v#{@version}"],
       name: "Youtrack Logger Backend",
       source_url: "https://github.com/unifysell/youtrack_logger_backend"
     ]
