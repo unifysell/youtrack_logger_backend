@@ -44,7 +44,8 @@ defmodule YoutrackLoggerBackend.MixProject do
       {:tesla, "~> 1.0.0-beta.1"},
       {:poison, "~> 3.1"},
       {:hackney, "~>1.6"},
-      {:ex_doc, ">= 0.0.0", only: :dev}
+      {:ex_doc, ">= 0.0.0", only: :dev},
+      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false}
     ]
   end
 end
