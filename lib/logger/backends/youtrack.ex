@@ -18,7 +18,7 @@ defmodule Logger.Backends.Youtrack do
   @default_format_summary "$level: $message\n"
   @default_format_description "$date $time\n$metadata\n"
 
-  def init({__MODULE__, opts}) do
+  def init({__MODULE__, _opts}) do
     config = Application.get_env(:logger, :youtrack)
 
     if config do
@@ -66,12 +66,12 @@ defmodule Logger.Backends.Youtrack do
     :ok
   end
 
-  defp generate_summary(level, message, timestamp, metadata, %{format_summary: format, metadata: keys} = state) do
+  defp generate_summary(level, message, timestamp, metadata, %{format_summary: format, metadata: keys}) do
     Logger.Formatter.format(format, level, message, timestamp, take_metadata(metadata, keys))
     |> to_string()
   end
 
-  defp generate_description(level, message, timestamp, metadata, %{format_description: format, metadata: keys} = state) do
+  defp generate_description(level, message, timestamp, metadata, %{format_description: format, metadata: keys}) do
     Logger.Formatter.format(format, level, message, timestamp, take_metadata(metadata, keys))
     |> to_string()
   end
@@ -114,7 +114,7 @@ defmodule Logger.Backends.Youtrack do
   end
 
   defp log_event(
-         %{host: host, token: token, project: project, level: level} = state,
+         %{host: host, token: token, project: project, level: _level} = state,
          summary,
          description
        ) do

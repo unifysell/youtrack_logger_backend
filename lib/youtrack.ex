@@ -28,10 +28,4 @@ defmodule Youtrack do
       query: [project: project, summary: summary, description: description]
     )
   end
-
-  def create_issue(client, project, summary, description) do
-    #    IO.inspect(project, label: "PROJECT")
-    # IO.inspect(summary, label: "SUMMARY")
-    # IO.inspect(description, label: "DESCRIPTION")
-  end
 end
