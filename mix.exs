@@ -1,7 +1,7 @@
 defmodule YoutrackLoggerBackend.MixProject do
   use Mix.Project
 
-  @version "0.1.1-beta.6"
+  @version "0.1.1-beta.7"
 
   def project do
     [
