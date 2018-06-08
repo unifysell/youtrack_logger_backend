@@ -45,7 +45,8 @@ defmodule YoutrackLoggerBackend.MixProject do
       {:poison, "~> 3.1"},
       {:hackney, "~>1.6"},
       {:ex_doc, ">= 0.0.0", only: :dev},
-      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false}
+      {:dialyxir, "~> 0.5", only: [:dev, :test], runtime: false},
+      {:bypass, "~> 0.8", only: :test}
     ]
   end
 end
