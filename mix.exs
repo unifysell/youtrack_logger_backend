@@ -1,10 +1,12 @@
 defmodule YoutrackLoggerBackend.MixProject do
   use Mix.Project
 
+  @version "0.1.1-beta.6"
+
   def project do
     [
       app: :youtrack_logger_backend,
-      version: "0.1.1-beta.6",
+      version: @version,
       elixir: "~> 1.6",
       build_embedded: Mix.env() == :prod,
       start_permanent: Mix.env() == :prod,
