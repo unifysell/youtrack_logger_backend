@@ -9,6 +9,9 @@ defmodule YoutrackTest do
   describe "youtrack client tests" do
     test "can create issue", %{bypass: bypass} do
       Bypass.expect(bypass, fn conn ->
+        assert "PUT" == conn.method
+        assert "/rest/issue" == conn.request_path
+        assert ~S(project=Sandbox&summary=test-summary&description=test-description) == conn.query_string
         Plug.Conn.resp(conn, 201, "success")
       end)
 
@@ -22,8 +25,8 @@ defmodule YoutrackTest do
         Youtrack.create_issue(
           client,
           "Sandbox",
-          "test: youtrack client tests\n",
-          "can create issue\n"
+          "test-summary",
+          "test-description"
         )
 
       assert response.status == 201
