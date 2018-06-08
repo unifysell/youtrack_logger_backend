@@ -41,6 +41,7 @@ defmodule Logger.Backends.Youtrack do
         %{level: min_level} = state
       ) do
     ignore_youtrack_backend = Keyword.get(metadata, :ignore_youtrack_backend, false)
+
     if Logger.compare_levels(level, min_level) != :lt && !ignore_youtrack_backend do
       description = generate_description(level, message, timestamp, metadata, state)
       summary = generate_summary(level, message, timestamp, metadata, state)
@@ -66,12 +67,18 @@ defmodule Logger.Backends.Youtrack do
     :ok
   end
 
-  defp generate_summary(level, message, timestamp, metadata, %{format_summary: format, metadata: keys}) do
+  defp generate_summary(level, message, timestamp, metadata, %{
+         format_summary: format,
+         metadata: keys
+       }) do
     Logger.Formatter.format(format, level, message, timestamp, take_metadata(metadata, keys))
     |> to_string()
   end
 
-  defp generate_description(level, message, timestamp, metadata, %{format_description: format, metadata: keys}) do
+  defp generate_description(level, message, timestamp, metadata, %{
+         format_description: format,
+         metadata: keys
+       }) do
     Logger.Formatter.format(format, level, message, timestamp, take_metadata(metadata, keys))
     |> to_string()
   end
@@ -80,14 +87,17 @@ defmodule Logger.Backends.Youtrack do
   defp take_metadata(metadata, :all), do: metadata
 
   defp take_metadata(metadata, keys) do
-    reduced_metadata = Enum.reduce(keys, [], fn key, acc ->
-      case Keyword.fetch(metadata, key) do
-        {:ok, val} -> [{key, val} | acc]
-        :error -> acc
-      end
-    end)
-    |> Enum.reverse()
-    for {key, value} <- reduced_metadata, do: {"'''"<>to_string(key)<>"'''", to_string(value)<>"\n"}
+    reduced_metadata =
+      Enum.reduce(keys, [], fn key, acc ->
+        case Keyword.fetch(metadata, key) do
+          {:ok, val} -> [{key, val} | acc]
+          :error -> acc
+        end
+      end)
+      |> Enum.reverse()
+
+    for {key, value} <- reduced_metadata,
+        do: {"'''" <> to_string(key) <> "'''", to_string(value) <> "\n"}
   end
 
   defp init(config, state) do
@@ -97,7 +107,10 @@ defmodule Logger.Backends.Youtrack do
     level = Keyword.get(config, :level, :debug)
     format_summary_string = Keyword.get(config, :format_summary, @default_format_summary)
     format_summary = Logger.Formatter.compile(format_summary_string)
-    format_description_string = Keyword.get(config, :format_description, @default_format_description)
+
+    format_description_string =
+      Keyword.get(config, :format_description, @default_format_description)
+
     format_description = Logger.Formatter.compile(format_description_string)
     metadata = Keyword.get(config, :metadata)
 
@@ -120,9 +133,14 @@ defmodule Logger.Backends.Youtrack do
        ) do
     client = Youtrack.client(host, token)
     {:ok, response} = Youtrack.create_issue(client, project, summary, description)
+
     if response.status > 299 or response.status < 200 do
-      Logger.error("Request to #{response.url} failed with status #{response.status}.", ignore_youtrack_backend: true)
+      Logger.error(
+        "Request to #{response.url} failed with status #{response.status}.",
+        ignore_youtrack_backend: true
+      )
     end
+
     {:ok, state}
   end
 end
