@@ -17,7 +17,8 @@ defmodule YoutrackLoggerBackend.MixProject do
       homepage_url: "https://github.com/unifysell/youtrack_logger_backend",
       docs: [extras: ["README.md"], main: "readme", source_ref: "v#{@version}"],
       name: "Youtrack Logger Backend",
-      source_url: "https://github.com/unifysell/youtrack_logger_backend"
+      source_url: "https://github.com/unifysell/youtrack_logger_backend",
+      dialyzer: [plt_add_deps: :apps_direct, plt_add_apps: [:logger, :tesla]]
     ]
   end
 

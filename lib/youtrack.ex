@@ -2,9 +2,9 @@ defmodule Youtrack do
   @moduledoc """
   Module to connect to youtrack REST API
   """
-
   use Tesla
 
+  @spec client(binary, binary) :: map
   def client(host, token) when is_binary(host) and is_binary(token) do
     Tesla.build_client([
       {Tesla.Middleware.Headers,
@@ -19,12 +19,13 @@ defmodule Youtrack do
     ])
   end
 
+  @spec create_issue(Tesla.Env.client(), binary, binary, binary) :: Tesla.Env.result()
   def create_issue(client, project, summary, description)
       when is_binary(project) and is_binary(summary) and is_binary(description) do
     put(
       client,
       "/rest/issue",
-      "",
+      %{},
       query: [project: project, summary: summary, description: description]
     )
   end
