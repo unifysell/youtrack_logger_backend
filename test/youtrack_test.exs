@@ -1,6 +1,8 @@
 defmodule YoutrackTest do
   use ExUnit.Case, async: false
 
+  alias Plug.Conn
+
   setup do
     bypass = Bypass.open()
     {:ok, bypass: bypass}
@@ -15,7 +17,7 @@ defmodule YoutrackTest do
         assert ~S(project=Sandbox&summary=test-summary&description=test-description) ==
                  conn.query_string
 
-        Plug.Conn.resp(conn, 201, "success")
+        Conn.resp(conn, 201, "success")
       end)
 
       client =

@@ -7,6 +7,8 @@ defmodule Logger.Backends.Youtrack do
 
   require Logger
 
+  alias Logger.Formatter
+
   defstruct host: nil,
             project: nil,
             token: nil,
@@ -71,7 +73,8 @@ defmodule Logger.Backends.Youtrack do
          format_summary: format,
          metadata: keys
        }) do
-    Logger.Formatter.format(format, level, message, timestamp, take_metadata(metadata, keys))
+    format
+    |> Formatter.format(level, message, timestamp, take_metadata(metadata, keys))
     |> to_string()
   end
 
@@ -79,7 +82,8 @@ defmodule Logger.Backends.Youtrack do
          format_description: format,
          metadata: keys
        }) do
-    Logger.Formatter.format(format, level, message, timestamp, take_metadata(metadata, keys))
+    format
+    |> Formatter.format(level, message, timestamp, take_metadata(metadata, keys))
     |> to_string()
   end
 
@@ -88,7 +92,8 @@ defmodule Logger.Backends.Youtrack do
 
   defp take_metadata(metadata, keys) do
     reduced_metadata =
-      Enum.reduce(keys, [], fn key, acc ->
+      keys
+      |> Enum.reduce([], fn key, acc ->
         case Keyword.fetch(metadata, key) do
           {:ok, val} -> [{key, val} | acc]
           :error -> acc
@@ -106,12 +111,12 @@ defmodule Logger.Backends.Youtrack do
     token = Keyword.get(config, :token)
     level = Keyword.get(config, :level, :debug)
     format_summary_string = Keyword.get(config, :format_summary, @default_format_summary)
-    format_summary = Logger.Formatter.compile(format_summary_string)
+    format_summary = Formatter.compile(format_summary_string)
 
     format_description_string =
       Keyword.get(config, :format_description, @default_format_description)
 
-    format_description = Logger.Formatter.compile(format_description_string)
+    format_description = Formatter.compile(format_description_string)
     metadata = Keyword.get(config, :metadata)
 
     %{
