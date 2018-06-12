@@ -11,7 +11,10 @@ defmodule YoutrackTest do
       Bypass.expect(bypass, fn conn ->
         assert "PUT" == conn.method
         assert "/rest/issue" == conn.request_path
-        assert ~S(project=Sandbox&summary=test-summary&description=test-description) == conn.query_string
+
+        assert ~S(project=Sandbox&summary=test-summary&description=test-description) ==
+                 conn.query_string
+
         Plug.Conn.resp(conn, 201, "success")
       end)
 
