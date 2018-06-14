@@ -1,7 +1,7 @@
 defmodule YoutrackLoggerBackend.MixProject do
   use Mix.Project
 
-  @version "0.1.1-beta.7"
+  @version "0.1.2"
 
   def project do
     [
@@ -42,7 +42,7 @@ defmodule YoutrackLoggerBackend.MixProject do
   defp deps do
     [
       {:credo, "~> 0.9", only: [:dev, :test]},
-      {:tesla, "~> 1.0.0-beta.1"},
+      {:tesla, "~> 1.0.0"},
       {:poison, "~> 3.1"},
       {:hackney, "~>1.6"},
       {:ex_doc, ">= 0.0.0", only: :dev},
