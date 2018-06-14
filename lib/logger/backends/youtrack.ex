@@ -105,7 +105,7 @@ defmodule Logger.Backends.Youtrack do
         do: {"'''" <> to_string(key) <> "'''", to_string(value) <> "\n"}
   end
 
-  defp init(config, state) do
+  defp init(config, state) when is_list(config) do
     host = Keyword.get(config, :host)
     project = Keyword.get(config, :project)
     token = Keyword.get(config, :token)
