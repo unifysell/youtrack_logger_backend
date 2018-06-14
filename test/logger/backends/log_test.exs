@@ -38,6 +38,6 @@ defmodule Logger.Backends.LogTest do
       Plug.Conn.resp(conn, 200, "")
     end)
 
-    :ok = Logger.error("testing error log")
+    assert :ok = Logger.error("testing error log")
   end
 end
