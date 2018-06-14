@@ -8,7 +8,8 @@ defmodule Youtrack.Formatter do
   def generate_summary(level, message, timestamp, metadata, %{
         format_summary: format,
         metadata: keys
-      }) do
+      })
+      when is_atom(level) and is_binary(message) and is_list(metadata) do
     format
     |> format(level, message, timestamp, take_metadata(metadata, keys))
     |> to_string()
@@ -17,7 +18,8 @@ defmodule Youtrack.Formatter do
   def generate_description(level, message, timestamp, metadata, %{
         format_description: format,
         metadata: keys
-      }) do
+      })
+      when is_atom(level) and is_binary(message) and is_list(metadata) do
     format
     |> format(level, message, timestamp, take_metadata(metadata, keys))
     |> to_string()
