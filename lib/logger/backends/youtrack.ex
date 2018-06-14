@@ -7,7 +7,7 @@ defmodule Logger.Backends.Youtrack do
 
   require Logger
 
-  alias Logger.Formatter
+  alias Youtrack.Formatter
 
   defstruct host: nil,
             project: nil,
@@ -40,13 +40,15 @@ defmodule Logger.Backends.Youtrack do
 
   def handle_event(
         {level, _group_leader, {Logger, message, timestamp, metadata}},
-        %{level: min_level} = state
-      ) do
+        %Logger.Backends.Youtrack{level: min_level} = state
+      )
+      when is_atom(level) and is_binary(message) and is_list(metadata) and is_atom(min_level) do
     ignore_youtrack_backend = Keyword.get(metadata, :ignore_youtrack_backend, false)
 
     if Logger.compare_levels(level, min_level) != :lt && !ignore_youtrack_backend do
-      description = generate_description(level, message, timestamp, metadata, state)
-      summary = generate_summary(level, message, timestamp, metadata, state)
+      description = Formatter.generate_description(level, message, timestamp, metadata, state)
+
+      summary = Formatter.generate_summary(level, message, timestamp, metadata, state)
       log_event(state, summary, description)
     end
 
@@ -69,54 +71,18 @@ defmodule Logger.Backends.Youtrack do
     :ok
   end
 
-  defp generate_summary(level, message, timestamp, metadata, %{
-         format_summary: format,
-         metadata: keys
-       }) do
-    format
-    |> Formatter.format(level, message, timestamp, take_metadata(metadata, keys))
-    |> to_string()
-  end
-
-  defp generate_description(level, message, timestamp, metadata, %{
-         format_description: format,
-         metadata: keys
-       }) do
-    format
-    |> Formatter.format(level, message, timestamp, take_metadata(metadata, keys))
-    |> to_string()
-  end
-
-  defp take_metadata(metadata, keys) when is_nil(keys), do: metadata
-  defp take_metadata(metadata, :all), do: metadata
-
-  defp take_metadata(metadata, keys) do
-    reduced_metadata =
-      keys
-      |> Enum.reduce([], fn key, acc ->
-        case Keyword.fetch(metadata, key) do
-          {:ok, val} -> [{key, val} | acc]
-          :error -> acc
-        end
-      end)
-      |> Enum.reverse()
-
-    for {key, value} <- reduced_metadata,
-        do: {"'''" <> to_string(key) <> "'''", to_string(value) <> "\n"}
-  end
-
   defp init(config, state) when is_list(config) do
     host = Keyword.get(config, :host)
     project = Keyword.get(config, :project)
     token = Keyword.get(config, :token)
     level = Keyword.get(config, :level, :debug)
     format_summary_string = Keyword.get(config, :format_summary, @default_format_summary)
-    format_summary = Formatter.compile(format_summary_string)
+    format_summary = Logger.Formatter.compile(format_summary_string)
 
     format_description_string =
       Keyword.get(config, :format_description, @default_format_description)
 
-    format_description = Formatter.compile(format_description_string)
+    format_description = Logger.Formatter.compile(format_description_string)
     metadata = Keyword.get(config, :metadata)
 
     %{
