@@ -1,22 +1,53 @@
 # youtrack_logger_backend
 
-Application config
+This is an elixir logger backend inspired by the onkel-dirtus/logger_file_backend.
+Therefor the usage is similar:
+
+## Base Application config - required
+
+Add the following to your configuration (this is the minimum required config beside the token):
+
 ```elixir
 config :logger,
   backends: [{Logger.Backend.Youtrack, :youtrack}]
 
 config :logger, :youtrack,
-  
-  format_summary: "$level: $message\n", #optional
-  format_description: "$date $time\n$metadata\n", #optional
-  metadata: [:module, :file, :function, :line], #optional - describes $metadata
-  
   host: "https://xxx.myjetbrains.com/youtrack",
-  project: "xxx",
-  level: :error #optional
+  project: "xxx"
+```
 
-# Add to prod.secret.exs
+When configuring the youtrack backend, the keys `host`, `project` and `token` are required.
+Add your youtrack url and the project you want to push your issues to.
 
+## Add a youtrack PERMANENT TOKEN - required
+
+Get this token on 'Profile'->'Update personal information and manage logins'->'Authentication' and create a new token or get an existing one here.
+You can also have a look at the official manual: https://www.jetbrains.com/help/youtrack/standalone/Manage-Permanent-Token.html
+
+It is recommended to store the secret information inside a separate config like `prod.secret.exs` and not adding it to your version control.
+
+```elixir
 config :logger, :youtrack,
   token: "xxx"
 ```
+
+## More configuration options - optional
+
+If you want to, you can also configure the following keys: `format_summary`, `format_description`, `metadata`, `level`.
+They all have default settings, so only use them if you want to customize.
+Your config could look like this:
+
+```elixir
+config :logger,
+  backends: [{Logger.Backend.Youtrack, :youtrack}]
+
+config :logger, :youtrack,
+  host: "https://xxx.myjetbrains.com/youtrack",
+  project: "xxx",
+  format_summary: "$level: $message\n", #optional
+  format_description: "$date $time\n$metadata\n", #optional
+  metadata: [:module, :file, :function, :line], #optional - describes $metadata
+  level: :error #optional
+```
+
+
