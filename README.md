@@ -3,6 +3,16 @@
 This is an elixir logger backend inspired by the onkel-dirtus/logger_file_backend.
 Therefor the usage is similar:
 
+## Installation
+
+Add to your deps inside the `mix.exs`:
+
+```elixir
+{:youtrack_logger_backend, "~> 0.1"}
+```
+
+Run `mix deps.get` to download it.
+
 ## Base Application config - required
 
 Add the following to your configuration (this is the minimum required config beside the token):
