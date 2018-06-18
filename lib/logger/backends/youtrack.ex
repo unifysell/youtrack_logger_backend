@@ -103,11 +103,13 @@ defmodule Logger.Backends.Youtrack do
          description
        ) do
     client = Youtrack.client(host, token)
-    {:ok, response} = Youtrack.create_issue(client, project, summary, description)
 
-    if response.status > 299 or response.status < 200 do
+    {:ok, %Tesla.Env{status: status, url: url}} =
+      Youtrack.create_issue(client, project, summary, description)
+
+    if status > 299 or status < 200 do
       Logger.error(
-        "Request to #{response.url} failed with status #{response.status}.",
+        "Request to #{url} failed with status #{status}.",
         ignore_youtrack_backend: true
       )
     end
