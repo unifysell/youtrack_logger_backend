@@ -9,10 +9,13 @@ defmodule Logger.Backends.YoutrackTest do
     Application.put_env(
       :logger,
       :youtrack,
-      host: "http://localhost:#{bypass.port}",
-      token: "XXX",
-      project: "Sandbox",
-      level: :warn
+      [
+        host: "http://localhost:#{bypass.port}",
+        token: "XXX",
+        project: "Sandbox",
+        level: :warn
+      ],
+      persistent: true
     )
 
     Logger.add_backend({Logger.Backends.Youtrack, :error})

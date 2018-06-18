@@ -10,10 +10,13 @@ defmodule Logger.Backends.LogTest do
     Application.put_env(
       :logger,
       :youtrack,
-      host: "http://localhost:#{bypass.port}",
-      token: "XXX",
-      project: "Sandbox",
-      level: :warn
+      [
+        host: "http://localhost:#{bypass.port}",
+        token: "XXX",
+        project: "Sandbox",
+        level: :warn
+      ],
+      persistent: true
     )
 
     Logger.add_backend({Logger.Backends.Youtrack, :error})
@@ -24,7 +27,8 @@ defmodule Logger.Backends.LogTest do
       Application.put_env(
         :logger,
         :youtrack,
-        nil
+        nil,
+        persistent: true
       )
 
       :ok
@@ -38,6 +42,6 @@ defmodule Logger.Backends.LogTest do
       Plug.Conn.resp(conn, 200, "")
     end)
 
-    assert :ok = Logger.error("testing error log")
+    assert :ok = Logger.error("testing error log - mock")
   end
 end
