@@ -9,6 +9,7 @@ defmodule Logger.Backends.Youtrack do
 
   alias Youtrack.Formatter
 
+  @required [:host, :project]
   defstruct host: nil,
             project: nil,
             token: nil,
@@ -121,6 +122,16 @@ defmodule Logger.Backends.Youtrack do
   end
 
   defp required_keys_set?(config) do
-    Keyword.has_key?(config, :host) and Keyword.has_key?(config, :project)
+    keys_set?(config, @required)
   end
+
+  defp keys_set?(_config, []) do true end
+  defp keys_set?(config, [head_key | remaining_required_keys] = required) when is_list(required) and is_list(config) do
+    if Keyword.has_key?(config, head_key) do
+      keys_set?(config, remaining_required_keys)
+    else
+      false
+    end
+  end
+
 end
