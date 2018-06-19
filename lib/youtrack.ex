@@ -14,7 +14,7 @@ defmodule Youtrack do
   ## Returns
     - %Tesla.Client{_}
   """
-  @spec client(binary, binary) :: Tesla.Client.t
+  @spec client(binary, binary) :: Tesla.Client.t()
   def client(host, token) when is_binary(host) and is_binary(token) do
     Tesla.build_client([
       {Tesla.Middleware.Headers,
@@ -44,7 +44,7 @@ defmodule Youtrack do
       - {:ok, %Tesla.Env{_}}
       - {:error, any}
   """
-  @spec create_issue(Tesla.Client.t, binary, binary, binary) :: Tesla.Env.result()
+  @spec create_issue(Tesla.Client.t(), binary, binary, binary) :: Tesla.Env.result()
   def create_issue(client, project, summary, description)
       when is_binary(project) and is_binary(summary) and is_binary(description) do
     put(
