@@ -39,7 +39,30 @@ defmodule Logger.Backends.YoutrackTest do
     Application.put_env(
       :logger,
       :youtrack,
-      nil
+      nil,
+      persistent: true
+    )
+
+    assert {:error, _} = Youtrack.init({Logger.Backends.Youtrack, :error_log})
+  end
+
+  test "error on partial config" do
+    Application.put_env(
+      :logger,
+      :youtrack,
+      [project: "Sandbox"],
+      persistent: true
+    )
+
+    assert {:error, _} = Youtrack.init({Logger.Backends.Youtrack, :error_log})
+  end
+
+  test "error on empty config" do
+    Application.put_env(
+      :logger,
+      :youtrack,
+      [],
+      persistent: true
     )
 
     assert {:error, _} = Youtrack.init({Logger.Backends.Youtrack, :error_log})

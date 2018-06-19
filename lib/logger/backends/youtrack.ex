@@ -22,10 +22,13 @@ defmodule Logger.Backends.Youtrack do
 
   def init({__MODULE__, _opts}) do
     config = Application.get_env(:logger, :youtrack)
-
-    if config do
+    if config && required_keys_set?(config) do
       {:ok, init(config, %__MODULE__{})}
     else
+      Logger.error(
+        "Youtrack Logger Backend: The given config was incomplete.",
+        ignore_youtrack_backend: true
+      )
       {:error, :ignore}
     end
   end
@@ -115,5 +118,9 @@ defmodule Logger.Backends.Youtrack do
     end
 
     {:ok, state}
+  end
+
+  defp required_keys_set?(config) do
+    Keyword.has_key?(config, :host) and Keyword.has_key?(config, :project)
   end
 end
