@@ -9,7 +9,7 @@ defmodule Logger.Backends.Youtrack do
 
   alias Youtrack.Formatter
 
-  @required [:host, :project]
+  @required [:host, :project, :token]
   defstruct host: nil,
             project: nil,
             token: nil,
