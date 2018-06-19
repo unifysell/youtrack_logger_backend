@@ -1,7 +1,11 @@
 # youtrack_logger_backend
 
 This is an elixir logger backend inspired by the onkel-dirtus/logger_file_backend.
-Therefor the usage is similar:
+
+## References
+
+* the hex package: https://hex.pm/packages/youtrack_logger_backend
+* the hex documentation: https://hexdocs.pm/youtrack_logger_backend/readme.html
 
 ## Installation
 

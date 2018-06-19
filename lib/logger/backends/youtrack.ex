@@ -21,11 +21,23 @@ defmodule Logger.Backends.Youtrack do
   @default_format_summary "$level: $message\n"
   @default_format_description "$date $time\n$metadata\n"
 
+  @doc """
+  Initial entry point on creating the gen event. Will create if the given config is valid.
+
+  ## Parameters
+    - any tuple
+
+  ## Returns
+    - tuple:
+      - {:ok, %{_}}
+      - {:error, :ignore}
+  """
+  @spec init(any) :: {:ok, map} | {:error, :ignore}
   def init({__MODULE__, _opts}) do
     config = Application.get_env(:logger, :youtrack)
 
     if config && required_keys_set?(config) do
-      {:ok, init(config, %__MODULE__{})}
+      {:ok, configure(config, %__MODULE__{})}
     else
       Logger.error(
         "Youtrack Logger Backend: The given config was incomplete.",
@@ -36,10 +48,22 @@ defmodule Logger.Backends.Youtrack do
     end
   end
 
+  @spec handle_call({:configure, list}, map) :: {:ok, any, map}
   def handle_call({:configure, options}, state) do
-    {:ok, :ok, init(options, state)}
+    {:ok, :ok, configure(options, state)}
   end
 
+  @doc """
+  Responsible logic for the actual logging.
+  Checking if the level is acceptable to log.
+  Generating the logging formats.
+  Logging the resulting messages.
+
+  ## Parameters:
+    - a tuple containing the data and metadata
+    - state: e.g. %Logger.Backends.Youtrack{_}
+  """
+  @spec handle_event(any, map) :: {:ok, map}
   def handle_event({_level, gl, __event}, state) when node(gl) != node() do
     {:ok, state}
   end
@@ -65,19 +89,26 @@ defmodule Logger.Backends.Youtrack do
     {:ok, state}
   end
 
+  @spec handle_info(any, map) :: {:ok, map}
   def handle_info(_, state) do
     {:ok, state}
   end
 
+  @spec code_change(any, map, any) :: {:ok, map}
   def code_change(_old_vsn, state, _extra) do
     {:ok, state}
   end
 
+  @spec terminate(any, map) :: :ok
   def terminate(_reason, _state) do
     :ok
   end
 
-  defp init(config, state) when is_list(config) do
+  # configures the backend when initially creating
+  # applying default params when possible
+  # returning the state map with updated values
+  @spec configure(list, map) :: map
+  defp configure(config, state) when is_list(config) do
     host = Keyword.get(config, :host)
     project = Keyword.get(config, :project)
     token = Keyword.get(config, :token)
@@ -103,6 +134,10 @@ defmodule Logger.Backends.Youtrack do
     }
   end
 
+  # logging a given state
+  # making a create_issue call by the use of a youtrack client
+  # will log an error if the request failed
+  @spec log_event(map, binary, binary) :: tuple
   defp log_event(
          %{host: host, token: token, project: project, level: _level} = state,
          summary,
@@ -118,15 +153,24 @@ defmodule Logger.Backends.Youtrack do
         "Request to #{url} failed with status #{status}.",
         ignore_youtrack_backend: true
       )
+
+      {:error, state}
     end
 
     {:ok, state}
   end
 
+  # give a config to be evaluated
+  # returns true if all required config keys exist
+  # otherwise returns false
+  @spec required_keys_set?(list) :: boolean
   defp required_keys_set?(config) do
     keys_set?(config, @required)
   end
 
+  # give a config as first parameter and a list of keys that are required
+  # will return true or false
+  @spec keys_set?(list, list) :: boolean
   defp keys_set?(_config, []) do
     true
   end
