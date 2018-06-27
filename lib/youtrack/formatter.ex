@@ -5,6 +5,20 @@ defmodule Youtrack.Formatter do
 
   import Logger.Formatter, only: [format: 5]
 
+  @doc """
+  By given input data, this functions creates a summary string, applying the configured summary format.
+
+  ## Parameters:
+    - level
+    - message
+    - timestamp
+    - metadata
+    - map - containing summary format and metadata keys
+
+  ## Returns:
+    - a string that contains a formatted summary
+  """
+  @spec generate_summary(atom, binary, tuple, list, map) :: binary
   def generate_summary(level, message, timestamp, metadata, %{
         format_summary: format,
         metadata: keys
@@ -15,6 +29,20 @@ defmodule Youtrack.Formatter do
     |> to_string()
   end
 
+  @doc """
+  By given input data, this functions creates a description string, applying the configured summary format.
+
+  ## Parameters:
+    - level
+    - message
+    - timestamp
+    - metadata
+    - map - containing summary format and metadata keys
+
+  ## Returns:
+    - a string that contains a formatted summary
+  """
+  @spec generate_description(atom, binary, tuple, list, map) :: binary
   def generate_description(level, message, timestamp, metadata, %{
         format_description: format,
         metadata: keys
@@ -25,9 +53,11 @@ defmodule Youtrack.Formatter do
     |> to_string()
   end
 
+  # updates the given metadata
+  # the resulting enum only contains the configured keys
+  @spec take_metadata(list, any) :: list
   defp take_metadata(metadata, keys) when is_nil(keys), do: metadata
   defp take_metadata(metadata, :all), do: metadata
-
   defp take_metadata(metadata, keys) do
     reduced_metadata =
       keys
