@@ -1,5 +1,7 @@
 # youtrack_logger_backend
 
+[![Build Status](https://travis-ci.org/unifysell/youtrack_logger_backend.svg?branch=master)](https://travis-ci.org/unifysell/youtrack_logger_backend)
+
 This is an elixir logger backend inspired by the onkel-dirtus/logger_file_backend.
 
 ## References
