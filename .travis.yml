@@ -1,0 +1,28 @@
+language: elixir
+
+elixir:
+  - '1.6.5'
+
+otp_release:
+  - '20.0'
+
+install:
+  - mix local.rebar --force
+  - mix local.hex --force
+  - mix deps.get
+
+jobs:
+  include:
+    - stage: style
+      script: mix format --check-formatted
+    - script: mix credo --strict
+    - stage: build
+      script: mix compile --warnings-as-errors
+    - stage: test
+      script: mix test
+    - script: mix dialyzer --halt-exit-status
+
+cache:
+  directories:
+    - _build
+    - deps
