@@ -58,6 +58,7 @@ defmodule Youtrack.Formatter do
   @spec take_metadata(list, any) :: list
   defp take_metadata(metadata, keys) when is_nil(keys), do: metadata
   defp take_metadata(metadata, :all), do: metadata
+
   defp take_metadata(metadata, keys) do
     reduced_metadata =
       keys
