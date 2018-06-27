@@ -6,8 +6,9 @@ This is an elixir logger backend inspired by the onkel-dirtus/logger_file_backen
 
 ## References
 
-* the hex package: https://hex.pm/packages/youtrack_logger_backend
-* the hex documentation: https://hexdocs.pm/youtrack_logger_backend/readme.html
+* the [hex package](https://hex.pm/packages/youtrack_logger_backend)
+* the [hex documentation](https://hexdocs.pm/youtrack_logger_backend/readme.html)
+* if you have found any issues with the package, please tell us [here](https://github.com/unifysell/youtrack_logger_backend/issues)
 
 ## Installation
 
