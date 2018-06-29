@@ -56,11 +56,18 @@ defmodule Youtrack.Formatter do
   # updates the given metadata
   # the resulting enum only contains the configured keys
   @spec take_metadata(list, any) :: list
-  defp take_metadata(metadata, keys) when is_nil(keys), do: metadata
-  defp take_metadata(metadata, :all), do: metadata
-
   defp take_metadata(metadata, keys) do
-    reduced_metadata =
+    reduced_metadata = reduce_metadata(metadata, keys)
+    for {key, value} <- reduced_metadata,
+        do: {"'''" <> to_string(key) <> "'''", to_string(value) <> "\n"}
+  end
+
+  # filters the given metadata by a given filter list
+  @spec reduce_metadata(list, any) :: list
+  defp reduce_metadata(metadata, keys) when is_nil(keys), do: metadata
+  defp reduce_metadata(metadata, :all), do: metadata
+
+  defp reduce_metadata(metadata, keys) do
       keys
       |> Enum.reduce([], fn key, acc ->
         case Keyword.fetch(metadata, key) do
@@ -69,8 +76,5 @@ defmodule Youtrack.Formatter do
         end
       end)
       |> Enum.reverse()
-
-    for {key, value} <- reduced_metadata,
-        do: {"'''" <> to_string(key) <> "'''", to_string(value) <> "\n"}
   end
 end
