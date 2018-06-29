@@ -4,7 +4,7 @@ defmodule Youtrack.FormatterTest do
   alias Youtrack.Formatter
 
   test "generate summary" do
-    assert "error: message\n" ==
+    assert "error: \"message\"\n" ==
              Formatter.generate_summary(
                :error,
                "message",

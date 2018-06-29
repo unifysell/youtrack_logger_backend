@@ -23,9 +23,14 @@ defmodule Youtrack.Formatter do
         format_summary: format,
         metadata: keys
       })
-      when is_atom(level) and is_binary(message) and is_list(metadata) do
+      when is_atom(level) and is_list(metadata) do
     format
-    |> format(level, message, timestamp, take_metadata(metadata, keys))
+    |> format(
+      level,
+      String.slice(Kernel.inspect(message), 0..200),
+      timestamp,
+      take_metadata(metadata, keys)
+    )
     |> to_string()
   end
 
@@ -47,9 +52,14 @@ defmodule Youtrack.Formatter do
         format_description: format,
         metadata: keys
       })
-      when is_atom(level) and is_binary(message) and is_list(metadata) do
+      when is_atom(level) and is_list(metadata) do
     format
-    |> format(level, message, timestamp, take_metadata(metadata, keys))
+    |> format(
+      level,
+      String.slice(Kernel.inspect(message), 0..1500),
+      timestamp,
+      take_metadata(metadata, keys)
+    )
     |> to_string()
   end
 

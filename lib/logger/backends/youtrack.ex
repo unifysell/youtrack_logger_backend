@@ -70,19 +70,24 @@ defmodule Logger.Backends.Youtrack do
 
   def handle_event(
         {level, _group_leader, {Logger, message, timestamp, metadata}},
-        %Logger.Backends.Youtrack{level: min_level} = state
+        %{level: min_level} = state
       )
-      when is_atom(level) and is_binary(message) and is_list(metadata) and is_atom(min_level) do
+      when is_atom(level) and is_list(metadata) and is_atom(min_level) do
     ignore_youtrack_backend = Keyword.get(metadata, :ignore_youtrack_backend, false)
 
     if Logger.compare_levels(level, min_level) != :lt && !ignore_youtrack_backend do
       description = Formatter.generate_description(level, message, timestamp, metadata, state)
-
       summary = Formatter.generate_summary(level, message, timestamp, metadata, state)
       log_event(state, summary, description)
     end
 
     {:ok, state}
+  rescue
+    _ ->
+      Logger.error(
+        "Logging message to youtrack backend failed.",
+        ignore_youtrack_backend: true
+      )
   end
 
   def handle_event(_, state) do
@@ -90,6 +95,10 @@ defmodule Logger.Backends.Youtrack do
   end
 
   @spec handle_info(any, map) :: {:ok, map}
+  def handle_info({:DOWN, ref, _, pid, reason}, %{ref: ref}) do
+    raise "device #{inspect(pid)} exited: " <> Exception.format_exit(reason)
+  end
+
   def handle_info(_, state) do
     {:ok, state}
   end
