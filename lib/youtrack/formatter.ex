@@ -58,6 +58,7 @@ defmodule Youtrack.Formatter do
   @spec take_metadata(list, any) :: list
   defp take_metadata(metadata, keys) do
     reduced_metadata = reduce_metadata(metadata, keys)
+
     for {key, value} <- reduced_metadata,
         do: {"'''" <> to_string(key) <> "'''", to_string(value) <> "\n"}
   end
@@ -68,13 +69,13 @@ defmodule Youtrack.Formatter do
   defp reduce_metadata(metadata, :all), do: metadata
 
   defp reduce_metadata(metadata, keys) do
-      keys
-      |> Enum.reduce([], fn key, acc ->
-        case Keyword.fetch(metadata, key) do
-          {:ok, val} -> [{key, val} | acc]
-          :error -> acc
-        end
-      end)
-      |> Enum.reverse()
+    keys
+    |> Enum.reduce([], fn key, acc ->
+      case Keyword.fetch(metadata, key) do
+        {:ok, val} -> [{key, val} | acc]
+        :error -> acc
+      end
+    end)
+    |> Enum.reverse()
   end
 end
