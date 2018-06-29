@@ -19,7 +19,7 @@ defmodule Logger.Backends.Youtrack do
             metadata: nil
 
   @default_format_summary "$level: $message\n"
-  @default_format_description "'''Level'''$level\n'''Reported at'''\n$date $time\n'''Metadata'''\n$metadata\n'''Message'''\n$message\n"
+  @default_format_description "==Level==\n$level\n==Reported at==\n$date $time\n==Metadata==\n$metadata\n==Message==\n$message\n"
 
   @doc """
   Initial entry point on creating the gen event. Will create if the given config is valid.
