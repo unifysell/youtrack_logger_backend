@@ -47,17 +47,17 @@ defmodule Youtrack.FormatterTest do
 
     assert String.match?(
              description,
-             ~r/.*\n'''pid'''="\d.\d\d\d.\d"/
+             ~r/.*\n'''pid'''=/
            )
 
     assert String.contains?(description, "'''module'''=")
-    assert String.contains?(description, "'''function'''=\"generate description/1\"")
+    assert String.contains?(description, "'''function'''=")
 
     assert String.contains?(
              description,
-             "'''file'''=\"/home/rutho/projects/youtrack_logger_backend/test/logger/backends/formatter_test.exs\""
+             "'''file'''="
            )
 
-    assert String.contains?(description, "'''line'''=41")
+    assert String.contains?(description, "'''line'''=")
   end
 end
