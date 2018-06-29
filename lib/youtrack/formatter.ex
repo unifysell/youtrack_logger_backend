@@ -60,7 +60,7 @@ defmodule Youtrack.Formatter do
     reduced_metadata = reduce_metadata(metadata, keys)
 
     for {key, value} <- reduced_metadata,
-        do: {"'''" <> to_string(key) <> "'''", to_string(value) <> "\n"}
+        do: {"'''" <> to_string(key) <> "'''", Kernel.inspect(value) <> "\n"}
   end
 
   # filters the given metadata by a given filter list
