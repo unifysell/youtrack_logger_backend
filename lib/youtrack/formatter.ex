@@ -27,7 +27,7 @@ defmodule Youtrack.Formatter do
     format
     |> format(
       level,
-      String.slice(Kernel.inspect(message), 0..200),
+      shorten_message(message),
       timestamp,
       take_metadata(metadata, keys)
     )
@@ -56,7 +56,7 @@ defmodule Youtrack.Formatter do
     format
     |> format(
       level,
-      String.slice(Kernel.inspect(message), 0..1500),
+      escape_description_message(message),
       timestamp,
       take_metadata(metadata, keys)
     )
@@ -87,5 +87,31 @@ defmodule Youtrack.Formatter do
       end
     end)
     |> Enum.reverse()
+  end
+
+  # reduce the length of a message to create a shorter summary
+  defp shorten_message(message) when is_binary(message) do
+    if String.length(message) > 200 do
+      String.slice(message, 0..200) <> "...(truncated)"
+    else
+      message
+    end
+  end
+
+  defp shorten_message(message) do
+    message
+    |> to_string()
+    |> shorten_message()
+  end
+
+  # escape the actual error message to create a correctly formatted output
+  defp escape_description_message(message) when is_binary(message) do
+    "```\n" <> message <> "\n```"
+  end
+
+  defp escape_description_message(message) do
+    message
+    |> to_string()
+    |> escape_description_message()
   end
 end

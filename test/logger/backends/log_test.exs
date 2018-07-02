@@ -44,4 +44,21 @@ defmodule Logger.Backends.LogTest do
 
     assert :ok = Logger.error("testing error log - mock")
   end
+
+  test "can log error as binary list", %{bypass: bypass} do
+    Bypass.expect_once(bypass, "PUT", "/rest/issue", fn conn ->
+      Plug.Conn.resp(conn, 200, "")
+    end)
+
+    assert :ok =
+             Logger.error([
+               [
+                 "#PID<0.987.0>",
+                 " running ",
+                 "UnifysellApiWeb.Endpoint",
+                 [32, 40, "cowboy_protocol", 41],
+                 " terminated\n"
+               ]
+             ])
+  end
 end
