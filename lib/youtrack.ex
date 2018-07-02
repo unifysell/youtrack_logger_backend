@@ -20,12 +20,10 @@ defmodule Youtrack do
       {Tesla.Middleware.Headers,
        [
          {"Authorization", "Bearer " <> token},
-         {"Content-Type", "application/json"},
          {"Accept", "application/json"}
        ]},
       {Tesla.Middleware.BaseUrl, host},
-      #  {Tesla.Middleware.Timeout, timeout: 3_000},
-      {Tesla.Middleware.JSON, engine: Poison}
+      {Tesla.Middleware.FormUrlencoded, nil}
     ])
   end
 
@@ -50,8 +48,8 @@ defmodule Youtrack do
     put(
       client,
       "/rest/issue",
-      %{},
-      query: [project: project, summary: summary, description: description]
+      %{project: project, summary: summary, description: description},
+      query: []
     )
   end
 end
